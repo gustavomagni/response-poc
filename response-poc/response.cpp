@@ -34,8 +34,11 @@ int main(int argc, char** argv) {
 	try {
 		std::string conn_url = argc > 1 ? argv[1] : "//127.0.0.1:5672";
 		std::string addr = argc > 2 ? argv[2] : "examples";
+
 		response resp(conn_url, addr);
+
 		proton::container(resp).run();
+
 		return 0;
 	}
 	catch (const std::exception & e) {
