@@ -19,29 +19,57 @@
  *
  */
 #include <proton/connection.hpp>
+#include <proton/connection_options.hpp>
 #include <proton/container.hpp>
 #include <proton/message.hpp>
 #include <proton/message_id.hpp>
 #include <proton/messaging_handler.hpp>
+#include <proton/receiver_options.hpp>
+#include <proton/source_options.hpp>
+#include <proton/target_options.hpp>
+
 #include <iostream>
 #include <map>
 #include <string>
 #include <cctype>
+
 #include "fake_cpp11.h"
+
+using proton::receiver_options;
+using proton::source_options;
+using proton::target_options;
 
 #pragma once
 class response : public proton::messaging_handler {
 
 	std::string conn_url_;
 	std::string addr_;
+	std::string user;
+	std::string password;
 	proton::connection conn_;
+	proton::receiver receiver;
+
 	std::map<std::string, proton::sender> senders_;
 
-public:	response(const std::string& u, const std::string& a) : conn_url_(u), addr_(a) {}
+public:	response(const std::string& url, const std::string& adr, const std::string& user, const std::string& passw) : conn_url_(url), addr_(adr), user(user), password(passw) {}
 
 	  void on_container_start(proton::container& c) override {
+		  proton::connection_options co;
+
+		  if (!user.empty()) co.user(user);
+		  if (!password.empty()) co.password(password);
+
+		  source_options sourceOpts;
+		  sourceOpts.address("valorEconomicoFila");
+		  sourceOpts.dynamic(false);
+
+		  receiver_options opts;
+		  opts.name("valorEconomicoFila");
+		  opts.source(sourceOpts);
+
 		  conn_ = c.connect(conn_url_);
-		  conn_.open_receiver(addr_);
+		  receiver = conn_.open_receiver(addr_, opts);
+
 		  std::cout << "Server connected to " << conn_url_ << std::endl;
 	  }
 

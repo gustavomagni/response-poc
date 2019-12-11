@@ -32,10 +32,15 @@
 
 int main(int argc, char** argv) {
 	try {
-		std::string conn_url = argc > 1 ? argv[1] : "//127.0.0.1:5672";
-		std::string addr = argc > 2 ? argv[2] : "examples";
+		//localhost:61616/valorEconomicoFila
+		//std::string conn_url = argc > 1 ? argv[1] : "//localhost:61616";
+		std::string conn_url = "10.33.0.26:61616";
+		//std::string addr = argc > 2 ? argv[2] : "examples";
+		std::string addr = "valorEconomicoFila";
+		std::string user = "amq-broker";
+		std::string password = "redhat";
 
-		response resp(conn_url, addr);
+		response resp(conn_url, addr, user, password);
 
 		proton::container(resp).run();
 
