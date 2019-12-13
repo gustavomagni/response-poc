@@ -59,6 +59,20 @@ public:	response(const std::string& url, const std::string& adr, const std::stri
 		  if (!user.empty()) co.user(user);
 		  if (!password.empty()) co.password(password);
 
+		  co.sasl_enabled(true);
+		  co.sasl_allow_insecure_mechs(true);
+
+		  conn_ = c.connect(conn_url_, co);
+		  conn_.open_receiver(addr_);
+		  std::cout << "Server connected to " << conn_url_ << std::endl;
+	  }
+
+	  /**void on_container_start(proton::container& c) override {
+		  proton::connection_options co;
+
+		  if (!user.empty()) co.user(user);
+		  if (!password.empty()) co.password(password);
+
 		  source_options sourceOpts;
 		  sourceOpts.address("valorEconomicoFila");
 		  sourceOpts.dynamic(false);
@@ -71,7 +85,34 @@ public:	response(const std::string& url, const std::string& adr, const std::stri
 		  receiver = conn_.open_receiver(addr_, opts);
 
 		  std::cout << "Server connected to " << conn_url_ << std::endl;
-	  }
+	  }*/
+
+	  /**void on_container_start(proton::container& c) override {
+		  proton::connection_options co;
+
+		  if (!user.empty()) co.user(user);
+		  if (!password.empty()) co.password(password);
+
+		  co.sasl_enabled(true);
+		  co.sasl_allow_insecure_mechs(true);
+
+		  //source_options sourceOpts;
+		  //sourceOpts.address("valorEconomicoFila");
+		  //sourceOpts.dynamic(true);
+
+		  //receiver_options opts;
+		  //opts.name("valorEconomicoFila");
+		  //opts.source(sourceOpts);
+
+		  //conn_ = c.connect(conn_url_);
+		  //receiver = c.open_receiver(conn_url_, opts, co);
+
+		  conn_ = c.connect(conn_url_, co);
+		 
+		  conn_.open_receiver(addr_);
+
+		  std::cout << "Server connected to " << conn_url_ << std::endl;
+	  }*/
 
 	 
 	  void on_message(proton::delivery&, proton::message& m) override {
