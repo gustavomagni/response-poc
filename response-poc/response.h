@@ -64,63 +64,16 @@ public:	response(const std::string& url, const std::string& adr, const std::stri
 
 		  conn_ = c.connect(conn_url_, co);
 		  conn_.open_receiver(addr_);
+
 		  std::cout << "Server connected to " << conn_url_ << std::endl;
 	  }
-
-	  /**void on_container_start(proton::container& c) override {
-		  proton::connection_options co;
-
-		  if (!user.empty()) co.user(user);
-		  if (!password.empty()) co.password(password);
-
-		  source_options sourceOpts;
-		  sourceOpts.address("valorEconomicoFila");
-		  sourceOpts.dynamic(false);
-
-		  receiver_options opts;
-		  opts.name("valorEconomicoFila");
-		  opts.source(sourceOpts);
-
-		  conn_ = c.connect(conn_url_);
-		  receiver = conn_.open_receiver(addr_, opts);
-
-		  std::cout << "Server connected to " << conn_url_ << std::endl;
-	  }*/
-
-	  /**void on_container_start(proton::container& c) override {
-		  proton::connection_options co;
-
-		  if (!user.empty()) co.user(user);
-		  if (!password.empty()) co.password(password);
-
-		  co.sasl_enabled(true);
-		  co.sasl_allow_insecure_mechs(true);
-
-		  //source_options sourceOpts;
-		  //sourceOpts.address("valorEconomicoFila");
-		  //sourceOpts.dynamic(true);
-
-		  //receiver_options opts;
-		  //opts.name("valorEconomicoFila");
-		  //opts.source(sourceOpts);
-
-		  //conn_ = c.connect(conn_url_);
-		  //receiver = c.open_receiver(conn_url_, opts, co);
-
-		  conn_ = c.connect(conn_url_, co);
-		 
-		  conn_.open_receiver(addr_);
-
-		  std::cout << "Server connected to " << conn_url_ << std::endl;
-	  }*/
-
 	 
 	  void on_message(proton::delivery&, proton::message& m) override {
 		  std::cout << "Received " << m.body() << std::endl;
 		  std::string reply_to = m.reply_to();
 		  proton::message reply;
 		  reply.to(reply_to);
-		  reply.body(m.body());
+		  reply.body(to_upper(proton::get<std::string>(m.body())));
 		  reply.correlation_id(m.correlation_id());
 
 		  if (!senders_[reply_to]) {
@@ -128,6 +81,15 @@ public:	response(const std::string& url, const std::string& adr, const std::stri
 		  }
 
 		  senders_[reply_to].send(reply);
+	  }
+
+	  std::string to_upper(const std::string& s) {
+		  std::string uc(s);
+		  size_t l = uc.size();
+		  for (size_t i = 0; i < l; i++) {
+			  uc[i] = static_cast<char>(std::toupper(uc[i]));
+		  }
+		  return uc;
 	  }
 };
 
